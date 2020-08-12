@@ -1,22 +1,89 @@
-import React, { useState, useEffect } from 'react';
-import Leaflet from 'leaflet';
+import React, { useState, useEffect, useCallback } from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import L from 'leaflet';
+import icon from 'leaflet/dist/images/marker-icon.png';
+import iconShadow from 'leaflet/dist/images/marker-shadow.png';
+
+import { routeSlice } from 'store';
+import { isMarkerExists, isCoordsExists } from 'common';
 
 import styles from './Map.module.scss';
 
-function Map() {
+// Workaround for this known Leaflet bug: https://github.com/Leaflet/Leaflet/issues/4968
+let DefaultIcon = L.icon({
+  iconUrl: icon,
+  shadowUrl: iconShadow,
+  iconAnchor: [12, 38]
+});
+L.Marker.prototype.options.icon = DefaultIcon;
+
+function Map(props) {
+  const {
+    route,
+    addPoint,
+  } = props;
+
   const [map, setMap] = useState(null);
+  const [markers, setMarkers] = useState([]);
+
+  const handleMapCLick = useCallback((event) => {
+    addPoint(event.latlng);
+  }, [addPoint]);
 
   useEffect(() => {
-    const mapInstance = Leaflet.map('map').setView([51.505, -0.09], 13);
-    Leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    const mapInstance = L.map('map').setView([51.505, -0.09], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(mapInstance);
+
+    mapInstance.on('click', handleMapCLick);
+
     setMap(mapInstance);
-  }, []);
+  }, [handleMapCLick]);
+
+  useEffect(() => {
+    if (!map) {
+      return;
+    }
+    const newMarkers = [];
+    const removedMarkers = [];
+
+    route.forEach((coords) => {
+      if (!isMarkerExists(markers, coords)) {
+        const marker = new L.Marker(coords);
+        marker.addTo(map);
+        newMarkers.push(marker);
+      }
+    });
+
+    markers.forEach((marker) => {
+      if (!isCoordsExists(route, marker._latlng)) {
+        removedMarkers.push(marker);
+      }
+    });
+
+    if (newMarkers.length || removedMarkers.length) {
+      setMarkers(markers
+        .filter((marker) => !removedMarkers.includes(marker))
+        .concat(newMarkers)
+      );
+      removedMarkers.forEach((marker) => {
+        marker.remove();
+      });
+    }
+  }, [map, route, setMarkers, markers]);
 
   return (
-    <div id="map" className={ styles.map }>{ console.log(map) }</div>
+  <div id="map" className={ styles.map }>{console.log(markers)}</div>
   );
 }
 
-export default Map;
+const mapStateToProps = (state) => ({
+  route: state.route,
+});
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  addPoint: routeSlice.actions.addPoint,
+}, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(Map);
