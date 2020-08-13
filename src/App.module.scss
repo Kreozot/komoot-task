@@ -1,5 +1,15 @@
+:global {
+  :root {
+    --color-background-main: rgb(69, 69, 69);
+    --color-text-main: rgb(228, 228, 228);
+    --color-text-secondary: rgb(165, 165, 165);
+  }
+}
+
 .container {
   display: flex;
   width: 100vw;
   height: 100vh;
+  background: var(--color-background-main);
+  color: var(--color-text-main);
 }

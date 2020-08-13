@@ -1,11 +1,16 @@
 .container {
   display: flex;
+  padding: 0.3em 0.5em;
+  align-items: center;
 }
 
 .title {
-
+  flex: 1;
 }
 
 .button {
-
+  width: 24px;
+  height: 24px;
+  padding: 0.3em;
 }
+

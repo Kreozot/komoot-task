@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { routeSlice } from 'store';
 
 import styles from './RouteItem.module.scss';
+import { ReactComponent as DragIcon } from './icon-drag.svg';
 
 function RouteItem(props) {
   const {
@@ -19,6 +20,7 @@ function RouteItem(props) {
 
   return (
     <div className={ styles.container }>
+      <div className={ styles.button }><DragIcon/></div>
       <div className={ styles.title }>Waypoint { index }</div>
       <button className={ styles.button } onClick={ handleRemoveClick }>X</button>
     </div>
