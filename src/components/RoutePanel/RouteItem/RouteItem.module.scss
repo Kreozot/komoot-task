@@ -1,7 +1,16 @@
+@import 'common.scss';
+
 .container {
   display: flex;
   padding: 0.3em 0.5em;
   align-items: center;
+
+  &:hover {
+    .buttonRemove {
+      opacity: 1;
+      pointer-events: all;
+    }
+  }
 }
 
 .title {
@@ -9,8 +18,29 @@
 }
 
 .button {
-  width: 24px;
-  height: 24px;
-  padding: 0.3em;
+  @extend .buttonBlank;
+
+  width: 28px;
+  height: 28px;
+  padding: 4px;
+  box-sizing: border-box;
+  color: var(--color-text-secondary);
+  cursor: pointer;
 }
 
+.buttonDrag {
+  @extend .button;
+
+  cursor: grab;
+}
+
+.buttonRemove {
+  @extend .button;
+
+  transition: opacity 0.3s;
+
+  @media (hover: hover) {
+    opacity: 0;
+    pointer-events: none;
+  }
+}

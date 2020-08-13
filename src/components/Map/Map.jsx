@@ -14,7 +14,7 @@ import styles from './Map.module.scss';
 let DefaultIcon = L.icon({
   iconUrl: icon,
   shadowUrl: iconShadow,
-  iconAnchor: [12, 38]
+  iconAnchor: [13, 38]
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
