@@ -1,8 +1,6 @@
-import React, { useCallback } from 'react';
-import { bindActionCreators } from 'redux';
+import React from 'react';
 import { connect } from 'react-redux';
 
-import { routeSlice } from 'store';
 import RouteItem from './RouteItem';
 
 import styles from './RoutePanel.module.scss';

@@ -2,21 +2,12 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import L from 'leaflet';
-import icon from 'leaflet/dist/images/marker-icon.png';
-import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 
 import { routeSlice, getLatLngArray } from 'store';
 import { isMarkerExists, isCoordsExists } from 'common';
+import { getMarkerIcon } from './marker';
 
 import styles from './Map.module.scss';
-
-// Workaround for this known Leaflet bug: https://github.com/Leaflet/Leaflet/issues/4968
-let DefaultIcon = L.icon({
-  iconUrl: icon,
-  shadowUrl: iconShadow,
-  iconAnchor: [13, 38]
-});
-L.Marker.prototype.options.icon = DefaultIcon;
 
 function Map(props) {
   const {
@@ -45,6 +36,18 @@ function Map(props) {
   }, [handleMapCLick]);
 
   useEffect(() => {
+    route.forEach((point, index) => {
+      const marker = markers.find((marker) => {
+        const markerLatLng = marker.getLatLng();
+        return (markerLatLng.lat === point.lat) && (markerLatLng.lng === point.lng);
+      });
+      if (marker) {
+        marker.setIcon(getMarkerIcon(index + 1));
+      }
+    });
+  }, [route, markers]);
+
+  useEffect(() => {
     if (!map) {
       return;
     }
@@ -59,9 +62,11 @@ function Map(props) {
       polyline.setLatLngs(routeArray);
     }
 
-    route.forEach((coords) => {
+    route.forEach((coords, index) => {
       if (!isMarkerExists(markers, coords)) {
-        const marker = new L.Marker(coords);
+        const marker = new L.Marker(coords, {
+          icon: getMarkerIcon(index + 1)
+        });
         marker.addTo(map);
         newMarkers.push(marker);
       }
@@ -82,7 +87,9 @@ function Map(props) {
         marker.remove();
       });
     }
-  }, [map, route, markers, routeArray, polyline]);
+  // Avoid "markers" dependency - it causes eternal rerendering
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [map, route, routeArray, polyline]);
 
   return (
   <div id="map" className={ styles.map }>{console.log(markers)}</div>

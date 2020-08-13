@@ -28,6 +28,10 @@ export const routeSlice = createSlice({
     movePoint(state, action) {
       const { sourceIndex, destinationIndex } = action.payload;
 
+      if (sourceIndex === destinationIndex) {
+        return state;
+      }
+
       const smallerIndex = Math.min(sourceIndex, destinationIndex);
       const largerIndex = Math.max(sourceIndex, destinationIndex);
       console.log([

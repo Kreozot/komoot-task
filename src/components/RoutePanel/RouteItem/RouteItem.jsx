@@ -12,11 +12,11 @@ const DRAG_TYPE = 'application/route-index';
 
 function RouteItem(props) {
   const {
-    item,
+    // item,
     index,
     removePoint,
     movePoint,
-    isBlank, // item just for drop handling
+    isBlank, // last blank item, just for drop handling
   } = props;
 
   const [isDragOver, setIsDragOver] = useState(false);
@@ -84,12 +84,10 @@ function RouteItem(props) {
     >
       { !isBlank &&
         <>
-          <div
-            className={ styles.buttonDrag }
-          >
+          <div className={ styles.buttonDrag }>
             <DragIcon/>
           </div>
-          <div className={ styles.title }>Waypoint { index }</div>
+          <div className={ styles.title }>Waypoint { index + 1 }</div>
           <button
             className={ styles.buttonRemove }
             onClick={ handleRemoveClick }

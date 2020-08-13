@@ -6,11 +6,16 @@
   align-items: center;
   box-sizing: border-box;
   min-height: 32px;
+  cursor: grab;
 
   &:hover {
     .buttonRemove {
       opacity: 1;
       pointer-events: all;
+    }
+
+    .title, .buttonDrag {
+      color: var(--color-text-focus);
     }
   }
 }
@@ -26,6 +31,7 @@
 
 .title {
   flex: 1;
+  transition: color var(--transition-time);
 }
 
 .button {
@@ -46,13 +52,12 @@
 
 .buttonDrag {
   @extend .button;
-
-  cursor: grab;
 }
 
 .buttonRemove {
   @extend .button;
 
+  cursor: pointer;
   transition: opacity var(--transition-time), color var(--transition-time);
 
   @media (hover: hover) and (pointer: fine) {
