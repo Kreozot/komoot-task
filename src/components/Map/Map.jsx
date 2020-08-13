@@ -5,7 +5,7 @@ import L from 'leaflet';
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 
-import { routeSlice } from 'store';
+import { routeSlice, getLatLngArray } from 'store';
 import { isMarkerExists, isCoordsExists } from 'common';
 
 import styles from './Map.module.scss';
@@ -21,11 +21,13 @@ L.Marker.prototype.options.icon = DefaultIcon;
 function Map(props) {
   const {
     route,
+    routeArray,
     addPoint,
   } = props;
 
   const [map, setMap] = useState(null);
   const [markers, setMarkers] = useState([]);
+  const [polyline, setPolyline] = useState(null);
 
   const handleMapCLick = useCallback((event) => {
     addPoint(event.latlng);
@@ -48,6 +50,14 @@ function Map(props) {
     }
     const newMarkers = [];
     const removedMarkers = [];
+
+    if (!polyline) {
+      const newPolyline = new L.Polyline(routeArray);
+      newPolyline.addTo(map);
+      setPolyline(newPolyline);
+    } else {
+      polyline.setLatLngs(routeArray);
+    }
 
     route.forEach((coords) => {
       if (!isMarkerExists(markers, coords)) {
@@ -72,7 +82,7 @@ function Map(props) {
         marker.remove();
       });
     }
-  }, [map, route, setMarkers, markers]);
+  }, [map, route, markers, routeArray, polyline]);
 
   return (
   <div id="map" className={ styles.map }>{console.log(markers)}</div>
@@ -81,6 +91,7 @@ function Map(props) {
 
 const mapStateToProps = (state) => ({
   route: state.route,
+  routeArray: getLatLngArray(state),
 });
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   addPoint: routeSlice.actions.addPoint,

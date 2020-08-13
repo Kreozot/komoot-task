@@ -1,6 +1,7 @@
 import { createSlice, configureStore, combineReducers } from '@reduxjs/toolkit';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
+import { createSelector } from 'reselect';
 
 const persistConfig = {
   key: 'root',
@@ -26,6 +27,13 @@ export const routeSlice = createSlice({
     },
   },
 });
+
+export const getLatLngArray = createSelector(
+  (state) => state.route,
+  (route) => {
+    return route.map((item) => [item.lat, item.lng]);
+  }
+);
 
 export const store = configureStore({
   reducer: persistReducer(persistConfig, combineReducers({
