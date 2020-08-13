@@ -4,6 +4,8 @@
   display: flex;
   padding: 0.3em 0.5em;
   align-items: center;
+  box-sizing: border-box;
+  min-height: 32px;
 
   &:hover {
     .buttonRemove {
@@ -11,6 +13,15 @@
       pointer-events: all;
     }
   }
+}
+
+.containerDragOver {
+  border-top: 2px solid var(--color-text-focus);
+  padding-top: 10px;
+}
+
+.containerBlank {
+  min-height: 32px;
 }
 
 .title {
@@ -26,6 +37,11 @@
   box-sizing: border-box;
   color: var(--color-text-secondary);
   cursor: pointer;
+  transition: color var(--transition-time);
+
+  &:hover {
+    color: var(--color-text-focus);
+  }
 }
 
 .buttonDrag {
@@ -37,9 +53,9 @@
 .buttonRemove {
   @extend .button;
 
-  transition: opacity 0.3s;
+  transition: opacity var(--transition-time), color var(--transition-time);
 
-  @media (hover: hover) {
+  @media (hover: hover) and (pointer: fine) {
     opacity: 0;
     pointer-events: none;
   }

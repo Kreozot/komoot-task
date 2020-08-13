@@ -19,10 +19,38 @@ export const routeSlice = createSlice({
       ];
     },
     removePoint(state, action) {
-      const index = action.payload.index;
+      const { index } = action.payload;
       return [
         ...state.slice(0, index),
         ...state.slice(index + 1)
+      ];
+    },
+    movePoint(state, action) {
+      const { sourceIndex, destinationIndex } = action.payload;
+
+      const smallerIndex = Math.min(sourceIndex, destinationIndex);
+      const largerIndex = Math.max(sourceIndex, destinationIndex);
+      console.log([
+        ...state.slice(0, smallerIndex),
+        ...(sourceIndex < destinationIndex
+          ? state.slice(smallerIndex + 1, largerIndex + 1)
+          : []),
+        state[sourceIndex],
+        ...(sourceIndex > destinationIndex
+          ? state.slice(smallerIndex, largerIndex)
+          : []),
+        ...state.slice(largerIndex + 1),
+      ]);
+      return [
+        ...state.slice(0, smallerIndex),
+        ...(sourceIndex < destinationIndex
+          ? state.slice(smallerIndex + 1, largerIndex + 1)
+          : []),
+        state[sourceIndex],
+        ...(sourceIndex > destinationIndex
+          ? state.slice(smallerIndex, largerIndex)
+          : []),
+        ...state.slice(largerIndex + 1),
       ];
     },
   },

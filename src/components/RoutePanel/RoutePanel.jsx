@@ -17,8 +17,9 @@ function RoutePanel(props) {
     <div className={ styles.container }>
       <div className={ styles.list }>
         { route.map((item, index) => (
-          <RouteItem item={ item } index={ index }/>
+          <RouteItem key={ item } item={ item } index={ index }/>
         )) }
+        <RouteItem item={ null } index={ route.length } isBlank/>
       </div>
     </div>
   );
