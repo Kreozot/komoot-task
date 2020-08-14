@@ -6,6 +6,7 @@ import { createSelector } from 'reselect';
 const persistConfig = {
   key: 'root',
   storage,
+  blacklist: ['hoverPoint']
 };
 
 export const routeSlice = createSlice({
