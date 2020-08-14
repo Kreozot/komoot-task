@@ -1,15 +1,6 @@
-import { createSlice, configureStore, combineReducers } from '@reduxjs/toolkit';
-import { persistStore, persistReducer } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
-import { createSelector } from 'reselect';
+import { createSlice } from '@reduxjs/toolkit';
 
-const persistConfig = {
-  key: 'root',
-  storage,
-  blacklist: ['hoverPoint']
-};
-
-export const routeSlice = createSlice({
+export default createSlice({
   name: 'route',
   initialState: [],
   reducers: {
@@ -58,34 +49,3 @@ export const routeSlice = createSlice({
     },
   },
 });
-
-export const hoverPointSlice = createSlice({
-  name: 'hoverPoint',
-  initialState: null,
-  reducers: {
-    setHoverPoint(state, action) {
-      if (action.payload) {
-        const { lat, lng } = action.payload;
-        return { lat, lng };
-      }
-      return null;
-    },
-  },
-});
-
-export const getLatLngArray = createSelector(
-  (state) => state.route,
-  (route) => {
-    return route.map((item) => [item.lat, item.lng]);
-  }
-);
-
-export const store = configureStore({
-  reducer: persistReducer(persistConfig, combineReducers({
-    route: routeSlice.reducer,
-    hoverPoint: hoverPointSlice.reducer,
-  })),
-  middleware: [],
-});
-
-export const persistor = persistStore(store);

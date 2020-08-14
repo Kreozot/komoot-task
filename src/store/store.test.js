@@ -1,4 +1,4 @@
-import { routeSlice } from './store';
+import { routeSlice } from '.';
 
 const initialState = [
   { lat: 1, lng: 1 },
