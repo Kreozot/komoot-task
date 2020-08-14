@@ -13,9 +13,18 @@ export const routeSlice = createSlice({
   initialState: [],
   reducers: {
     addPoint(state, action) {
+      const { lat, lng } = action.payload;
       return [
         ...state,
-        { lat: action.payload.lat, lng: action.payload.lng },
+        { lat, lng },
+      ];
+    },
+    setCoords(state, action) {
+      const { index, latlng: { lat, lng } } = action.payload;
+      return [
+        ...state.slice(0, index),
+        { lat, lng },
+        ...state.slice(index + 1)
       ];
     },
     removePoint(state, action) {
@@ -49,6 +58,20 @@ export const routeSlice = createSlice({
   },
 });
 
+export const hoverPointSlice = createSlice({
+  name: 'hoverPoint',
+  initialState: null,
+  reducers: {
+    setHoverPoint(state, action) {
+      if (action.payload) {
+        const { lat, lng } = action.payload;
+        return { lat, lng };
+      }
+      return null;
+    },
+  },
+});
+
 export const getLatLngArray = createSelector(
   (state) => state.route,
   (route) => {
@@ -59,6 +82,7 @@ export const getLatLngArray = createSelector(
 export const store = configureStore({
   reducer: persistReducer(persistConfig, combineReducers({
     route: routeSlice.reducer,
+    hoverPoint: hoverPointSlice.reducer,
   })),
   middleware: [],
 });

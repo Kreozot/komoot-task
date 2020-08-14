@@ -5,9 +5,13 @@
 }
 
 .marker {
-  color: blue;
+  color: var(--color-background-marker);
   background: none;
   position: relative;
+}
+
+.markerHover {
+  color: var(--color-background-marker-focus);
 }
 
 .markerLabel {

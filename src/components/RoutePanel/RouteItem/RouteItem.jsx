@@ -2,7 +2,7 @@ import React, { useCallback, useState, useMemo } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-import { routeSlice } from 'store';
+import { routeSlice, hoverPointSlice } from 'store';
 
 import styles from './RouteItem.module.scss';
 import { ReactComponent as DragIcon } from './icon-drag.svg';
@@ -12,11 +12,12 @@ const DRAG_TYPE = 'application/route-index';
 
 function RouteItem(props) {
   const {
-    // item,
+    item,
     index,
     removePoint,
     movePoint,
     isBlank, // last blank item, just for drop handling
+    setHoverPoint,
   } = props;
 
   const [isDragOver, setIsDragOver] = useState(false);
@@ -68,6 +69,18 @@ function RouteItem(props) {
     event.preventDefault();
   }, []);
 
+  const handleMouseEnter = useCallback((event) => {
+    if (!isBlank) {
+      setHoverPoint(item);
+    }
+  }, [isBlank, setHoverPoint, item]);
+
+  const handleMouseLeave = useCallback((event) => {
+    if (!isBlank) {
+      setHoverPoint(null);
+    }
+  }, [isBlank, setHoverPoint]);
+
   const containerClassName = useMemo(() =>
     `${ styles.container } ${ isDragOver ? styles.containerDragOver : '' }`
   , [isDragOver]);
@@ -80,6 +93,8 @@ function RouteItem(props) {
       onDragLeave={ handleDragLeave }
       onDrop={ handleDrop }
       onDragStart={ handleDragStart }
+      onMouseEnter={ handleMouseEnter }
+      onMouseLeave={ handleMouseLeave }
       draggable="true"
     >
       { !isBlank &&
@@ -109,6 +124,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   removePoint: routeSlice.actions.removePoint,
   movePoint: routeSlice.actions.movePoint,
+  setHoverPoint: hoverPointSlice.actions.setHoverPoint,
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(RouteItem);

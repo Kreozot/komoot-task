@@ -10,11 +10,11 @@ const markerIcon = `
 </svg>
 `;
 
-export function getMarkerIcon(index) {
+export function getMarkerIcon(index, isHovered) {
   return L.divIcon({
     iconSize: [32, 32],
     iconAnchor: [16, 32],
-    className: styles.marker,
+    className: isHovered ? styles.markerHover : styles.marker,
     html: `${ markerIcon }<div class="${ styles.markerLabel }">${ index }</div>`
   });
 }

@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import L from 'leaflet';
 
 import { routeSlice, getLatLngArray } from 'store';
-import { isMarkerExists, isCoordsExists } from 'common';
+import { isMarkerExists, isCoordsExists, isCoordsEqual } from 'common';
 import { getMarkerIcon } from './marker';
 
 import styles from './Map.module.scss';
@@ -14,6 +14,8 @@ function Map(props) {
     route,
     routeArray,
     addPoint,
+    hoverPoint,
+    setCoords,
   } = props;
 
   const [map, setMap] = useState(null);
@@ -40,13 +42,29 @@ function Map(props) {
     route.forEach((point, index) => {
       const marker = markers.find((marker) => {
         const markerLatLng = marker.getLatLng();
-        return (markerLatLng.lat === point.lat) && (markerLatLng.lng === point.lng);
+        return isCoordsEqual(markerLatLng, point);
       });
       if (marker) {
-        marker.setIcon(getMarkerIcon(index + 1));
+        const markerLatLng = marker.getLatLng();
+        marker.setIcon(getMarkerIcon(index + 1, hoverPoint && isCoordsEqual(markerLatLng, hoverPoint)));
+
+        marker.off('move');
+        marker.on('move', (event) => {
+          const { latlng } = event;
+          const polylineLatLngs = polyline.getLatLngs();
+          polylineLatLngs[index] = [latlng.lat, latlng.lng];
+          polyline.setLatLngs(polylineLatLngs);
+          // setCoords({ index, latlng });
+        });
+        marker.off('dragend');
+        marker.on('dragend', (event) => {
+          console.log('dragend');
+          const latlng = marker.getLatLng();
+          setCoords({ index, latlng });
+        });
       }
     });
-  }, [route, markers]);
+  }, [route, markers, hoverPoint, polyline, setCoords]);
 
   useEffect(() => {
     if (!map) {
@@ -66,7 +84,8 @@ function Map(props) {
     route.forEach((coords, index) => {
       if (!isMarkerExists(markers, coords)) {
         const marker = new L.Marker(coords, {
-          icon: getMarkerIcon(index + 1)
+          icon: getMarkerIcon(index + 1),
+          draggable: true,
         });
         marker.addTo(map);
         newMarkers.push(marker);
@@ -93,16 +112,18 @@ function Map(props) {
   }, [map, route, routeArray, polyline]);
 
   return (
-  <div id="map" className={ styles.map }>{console.log(markers)}</div>
+  <div id="map" className={ styles.map }></div>
   );
 }
 
 const mapStateToProps = (state) => ({
   route: state.route,
+  hoverPoint: state.hoverPoint,
   routeArray: getLatLngArray(state),
 });
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   addPoint: routeSlice.actions.addPoint,
+  setCoords: routeSlice.actions.setCoords,
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(Map);
