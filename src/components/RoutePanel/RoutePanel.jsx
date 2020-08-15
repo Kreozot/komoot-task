@@ -1,8 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import RouteItem from './RouteItem';
 import { getRoute } from 'store';
+import RouteItem from './RouteItem';
+import GpxDownloadButton from './GpxDownloadButton';
 
 import styles from './RoutePanel.module.scss';
 
@@ -22,6 +23,7 @@ function RoutePanel(props) {
         )) }
         <RouteItem item={ null } index={ route.length } isBlank/>
       </div>
+      <GpxDownloadButton/>
     </div>
   );
 }
