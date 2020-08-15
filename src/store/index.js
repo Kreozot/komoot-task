@@ -21,6 +21,16 @@ export const getLatLngArray = createSelector(
   }
 );
 
+export const getRoute = createSelector(
+  (state) => state.route,
+  (route) => {
+    return route.map((item, index) => ({
+      title: `Waypoint ${ index + 1 }`,
+      ...item
+    }));
+  }
+);
+
 export const store = configureStore({
   reducer: persistReducer(persistConfig, combineReducers({
     route: routeSlice.reducer,
