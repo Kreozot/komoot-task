@@ -82,8 +82,8 @@ function RouteItem(props) {
   }, [isBlank, setHoverPoint]);
 
   const containerClassName = useMemo(() =>
-    `${ styles.container } ${ isDragOver ? styles.containerDragOver : '' }`
-  , [isDragOver]);
+    `${ styles.container } ${ isDragOver ? styles.containerDragOver : '' } ${ isBlank ? styles.containerBlank : '' }`
+  , [isDragOver, isBlank]);
 
   return (
     <div
@@ -95,14 +95,14 @@ function RouteItem(props) {
       onDragStart={ handleDragStart }
       onMouseEnter={ handleMouseEnter }
       onMouseLeave={ handleMouseLeave }
-      draggable="true"
+      draggable={ !isBlank }
     >
       { !isBlank &&
         <>
           <div className={ styles.buttonDrag }>
             <DragIcon/>
           </div>
-          <div className={ styles.title }>Waypoint { index + 1 }</div>
+          <div className={ styles.title }>{ item.title }</div>
           <button
             className={ styles.buttonRemove }
             onClick={ handleRemoveClick }
@@ -118,9 +118,7 @@ function RouteItem(props) {
   )
 }
 
-const mapStateToProps = (state) => ({
-  route: state.route,
-});
+const mapStateToProps = (state) => ({});
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   removePoint: routeSlice.actions.removePoint,
   movePoint: routeSlice.actions.movePoint,

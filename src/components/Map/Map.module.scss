@@ -8,6 +8,7 @@
   color: var(--color-background-marker);
   background: none;
   position: relative;
+  transition: color var(--transition-time);
 }
 
 .markerHover {
