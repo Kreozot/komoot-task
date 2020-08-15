@@ -5,14 +5,22 @@
 }
 
 .marker {
-  color: var(--color-background-marker);
-  background: none;
+  background-color: var(--color-background-marker);
   position: relative;
-  transition: color var(--transition-time);
+  transition: background-color var(--transition-time), color var(--transition-time);
+  cursor: grab;
+  border: 2px solid black;
+  box-sizing: border-box;
+  border-radius: 50%;
+  top: 16px;
+  color: var(--color-text-marker);
 }
 
 .markerHover {
-  color: var(--color-background-marker-focus);
+  @extend .marker;
+
+  background-color: var(--color-background-marker-focus);
+  color: var(--color-text-marker-focus);
 }
 
 .markerLabel {
@@ -24,5 +32,4 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
 }

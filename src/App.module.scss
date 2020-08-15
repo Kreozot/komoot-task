@@ -1,13 +1,24 @@
 :global {
   :root {
-    --color-background-main: rgb(69, 69, 69);
-    --color-text-main: rgb(228, 228, 228);
-    --color-text-secondary: rgb(143, 143, 143);
-    --color-text-focus: rgb(98, 221, 73);
-    --color-background-marker: rgb(63, 63, 63);
-    --color-background-marker-focus: rgb(98, 221, 73);
+    --color-accent: #C3E452;
+    --color-accent-revert: black;
+
+    --color-background-main: #383838;
+    --color-text-main: #F6F6F6;
+    --color-text-secondary: #747474;
+    --color-text-focus: var(--color-accent);
+
+    --color-background-marker: var(--color-background-main);
+    --color-text-marker: var(--color-text-main);
+    --color-background-marker-focus: var(--color-accent);
+    --color-text-marker-focus: var(--color-accent-revert);
+
+
+    --color-background-button-primary: #C3E452;
+    --color-text-button-primary: black;
 
     --transition-time: 0.3s;
+    --border-radius-button: 5px;
   }
 }
 
