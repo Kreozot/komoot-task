@@ -3,7 +3,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import L from 'leaflet';
 
-import { routeSlice, getLatLngArray } from 'store';
+import { routeSlice, settingsSlice, getLatLngArray } from 'store';
 import { isMarkerExists, isCoordsExists, isCoordsEqual } from 'common';
 import { getMarkerIcon } from './marker';
 
@@ -16,27 +16,44 @@ function Map(props) {
     addPoint,
     hoverPoint,
     setCoords,
+    mapCenter,
+    mapZoom,
+    saveMapCenter,
+    saveMapZoom,
   } = props;
 
   const [map, setMap] = useState(null);
   const [markers, setMarkers] = useState([]);
   const [polyline, setPolyline] = useState(null);
 
-  const handleMapCLick = useCallback((event) => {
+  const handleMapClick = useCallback((event) => {
     addPoint(event.latlng);
   }, [addPoint]);
 
   useEffect(() => {
-    // TODO: Save current viewport in redux and restore it
-    const mapInstance = L.map('map').setView([51.505, -0.09], 13);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(mapInstance);
+    if (!map && mapCenter && mapZoom) {
+      const mapInstance = L.map('map').setView(mapCenter, mapZoom);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(mapInstance);
 
-    mapInstance.on('click', handleMapCLick);
+      setMap(mapInstance);
+    }
+  }, [map, mapCenter, mapZoom]);
 
-    setMap(mapInstance);
-  }, [handleMapCLick]);
+  const handleMapZoomEnd = useCallback(() => saveMapZoom(map.getZoom()), [map, saveMapZoom]);
+  const handleMapMoveEnd = useCallback(() => saveMapCenter(map.getCenter()), [map, saveMapCenter]);
+
+  useEffect(() => {
+    if (map) {
+      map.off('click');
+      map.on('click', handleMapClick);
+      map.off('zoomend');
+      map.on('zoomend', handleMapZoomEnd);
+      map.off('moveend');
+      map.on('moveend', handleMapMoveEnd);
+    }
+  }, [map, handleMapClick, handleMapZoomEnd, handleMapMoveEnd]);
 
   useEffect(() => {
     route.forEach((point, index) => {
@@ -111,19 +128,21 @@ function Map(props) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [map, route, routeArray, polyline]);
 
-  return (
-  <div id="map" className={ styles.map }></div>
-  );
+  return <div id="map" className={ styles.map } />;
 }
 
 const mapStateToProps = (state) => ({
   route: state.route,
   hoverPoint: state.hoverPoint,
+  mapCenter: state.settings.mapCenter,
+  mapZoom: state.settings.mapZoom,
   routeArray: getLatLngArray(state),
 });
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   addPoint: routeSlice.actions.addPoint,
   setCoords: routeSlice.actions.setCoords,
+  saveMapCenter: settingsSlice.actions.setMapCenter,
+  saveMapZoom: settingsSlice.actions.setMapZoom,
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(Map);

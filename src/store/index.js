@@ -5,8 +5,9 @@ import { createSelector } from 'reselect';
 
 import routeSlice from './routeSlice';
 import hoverPointSlice from './hoverPointSlice';
+import settingsSlice from './settingsSlice';
 
-export { routeSlice, hoverPointSlice };
+export { routeSlice, hoverPointSlice, settingsSlice };
 
 const persistConfig = {
   key: 'root',
@@ -35,6 +36,7 @@ export const store = configureStore({
   reducer: persistReducer(persistConfig, combineReducers({
     route: routeSlice.reducer,
     hoverPoint: hoverPointSlice.reducer,
+    settings: settingsSlice.reducer,
   })),
   middleware: [],
 });
