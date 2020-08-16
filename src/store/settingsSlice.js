@@ -3,8 +3,8 @@ import { createSlice } from '@reduxjs/toolkit';
 export default createSlice({
   name: 'settings',
   initialState: {
-    mapCenter: [51.505, -0.09],
-    mapZoom: 13
+    mapCenter: [36.25, 137.64],
+    mapZoom: 14
   },
   reducers: {
     setMapCenter(state, action) {

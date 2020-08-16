@@ -3,23 +3,18 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import L from 'leaflet';
 
-import { routeSlice, settingsSlice, getLatLngArray } from 'store';
+import { routeSlice, getLatLngArray } from 'store';
 import { isMarkerExists, isCoordsExists, isCoordsEqual } from 'common';
 import { getMarkerIcon } from './marker';
+import Map from './Map';
 
-import styles from './Map.module.scss';
-
-function Map(props) {
+function RouteMap(props) {
   const {
     route,
     routeArray,
     addPoint,
     hoverPoint,
     setCoords,
-    mapCenter,
-    mapZoom,
-    saveMapCenter,
-    saveMapZoom,
   } = props;
 
   const [map, setMap] = useState(null);
@@ -31,29 +26,11 @@ function Map(props) {
   }, [addPoint]);
 
   useEffect(() => {
-    if (!map && mapCenter && mapZoom) {
-      const mapInstance = L.map('map').setView(mapCenter, mapZoom);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      }).addTo(mapInstance);
-
-      setMap(mapInstance);
-    }
-  }, [map, mapCenter, mapZoom]);
-
-  const handleMapZoomEnd = useCallback(() => saveMapZoom(map.getZoom()), [map, saveMapZoom]);
-  const handleMapMoveEnd = useCallback(() => saveMapCenter(map.getCenter()), [map, saveMapCenter]);
-
-  useEffect(() => {
     if (map) {
       map.off('click');
       map.on('click', handleMapClick);
-      map.off('zoomend');
-      map.on('zoomend', handleMapZoomEnd);
-      map.off('moveend');
-      map.on('moveend', handleMapMoveEnd);
     }
-  }, [map, handleMapClick, handleMapZoomEnd, handleMapMoveEnd]);
+  }, [map, handleMapClick]);
 
   useEffect(() => {
     route.forEach((point, index) => {
@@ -71,7 +48,6 @@ function Map(props) {
           const polylineLatLngs = polyline.getLatLngs();
           polylineLatLngs[index] = [latlng.lat, latlng.lng];
           polyline.setLatLngs(polylineLatLngs);
-          // setCoords({ index, latlng });
         });
         marker.off('dragend');
         marker.on('dragend', (event) => {
@@ -128,21 +104,17 @@ function Map(props) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [map, route, routeArray, polyline]);
 
-  return <div id="map" className={ styles.map } />;
+  return <Map id="map" setMapParent={ setMap }/>;
 }
 
 const mapStateToProps = (state) => ({
   route: state.route,
   hoverPoint: state.hoverPoint,
-  mapCenter: state.settings.mapCenter,
-  mapZoom: state.settings.mapZoom,
   routeArray: getLatLngArray(state),
 });
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   addPoint: routeSlice.actions.addPoint,
   setCoords: routeSlice.actions.setCoords,
-  saveMapCenter: settingsSlice.actions.setMapCenter,
-  saveMapZoom: settingsSlice.actions.setMapZoom,
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(Map);
+export default connect(mapStateToProps, mapDispatchToProps)(RouteMap);
