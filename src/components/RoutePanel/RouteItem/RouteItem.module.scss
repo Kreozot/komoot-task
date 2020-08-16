@@ -2,7 +2,7 @@
 
 .container {
   display: flex;
-  padding: 0.3em 0.5em;
+  padding: 0.3em 0;
   align-items: center;
   box-sizing: border-box;
   min-height: 32px;
@@ -42,7 +42,7 @@
   height: 28px;
   padding: 4px;
   box-sizing: border-box;
-  color: var(--color-text-secondary);
+  color: var(--color-secondary);
   cursor: pointer;
   transition: color var(--transition-time);
 
@@ -53,6 +53,8 @@
 
 .buttonDrag {
   @extend .button;
+
+  margin-right: 0.3em;
 }
 
 .buttonRemove {

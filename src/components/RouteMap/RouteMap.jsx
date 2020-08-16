@@ -51,7 +51,6 @@ function RouteMap(props) {
         });
         marker.off('dragend');
         marker.on('dragend', (event) => {
-          console.log('dragend');
           const latlng = marker.getLatLng();
           setCoords({ index, latlng });
         });

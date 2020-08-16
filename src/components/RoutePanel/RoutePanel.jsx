@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { getRoute } from 'store';
+import Header from './Header';
 import RouteItem from './RouteItem';
 import GpxDownloadButton from './GpxDownloadButton';
 
@@ -17,6 +18,7 @@ function RoutePanel(props) {
 
   return (
     <div className={ styles.container }>
+      <Header/>
       <div className={ styles.list }>
         { route.map((item, index) => (
           <RouteItem key={ `${ item.title }${ item.lat }${ item.lng }` } item={ item } index={ index }/>

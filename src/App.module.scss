@@ -2,10 +2,11 @@
   :root {
     --color-accent: #C3E452;
     --color-accent-revert: black;
+    --color-secondary: #747474;
 
     --color-background-main: #383838;
     --color-text-main: #F6F6F6;
-    --color-text-secondary: #747474;
+    --color-text-secondary: var(--color-secondary);
     --color-text-focus: var(--color-accent);
 
     --color-background-marker: var(--color-background-main);
